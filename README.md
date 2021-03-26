@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Assignment for Evreka
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was developped by Birkan Bilici to fulfill user stories provided by Evreka team.
 
 ## Available Scripts
 
