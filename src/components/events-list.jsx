@@ -5,7 +5,7 @@ const EventsList = ({
   eventsData,
   handleSelected,
   selectedIndex,
-  sortedToggle,
+  dataSortToggle,
 }) => {
   const [selected, setSelected] = useState(
     `clicable-list-item-${selectedIndex}`
@@ -19,7 +19,7 @@ const EventsList = ({
       element.classList.add("clicked-item");
       let index = element.dataset.index;
       //send the selected index retrieved from custom data attribute to parent with this callback
-      handleSelected(index);
+      handleSelected(Number(index));
     }
 
     const previousElement = document.getElementById(previousSelected);
@@ -33,16 +33,16 @@ const EventsList = ({
   //if same box clicked handle toggle selection as a side effect
   useEffect(() => {
     if (previousSelected === selected) {
-      setSelected(null);
-      handleSelected(null);
+      setSelected("");
+      handleSelected(-1);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [previousSelected]);
 
-  //clear highlights when sortedToggle updates or non selected
+  //clear highlights when dataSortToggle updates or non selected
   useEffect(() => {
-    setSelected(null);
+    setSelected("");
     let elements = document.querySelectorAll(".list-row");
     if (elements) {
       elements.forEach((element) => {
@@ -51,7 +51,7 @@ const EventsList = ({
         }
       });
     }
-  }, [sortedToggle]);
+  }, [dataSortToggle]);
 
   //assigne column titles here
   const displayColumns = (row) => {

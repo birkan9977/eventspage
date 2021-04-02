@@ -1,31 +1,33 @@
-export function formatDate(dateObj) {
+export function formatDate(date) {
+  const newDate = new Date(date);
   const formattedDate =
-    String(dateObj.getDate()).padStart(2, "0") +
+    String(newDate.getDate()).padStart(2, "0") +
     "/" +
-    String(dateObj.getMonth() + 1).padStart(2, "0") +
+    String(newDate.getMonth() + 1).padStart(2, "0") +
     "/" +
-    String(dateObj.getFullYear()) +
+    String(newDate.getFullYear()) +
     " " +
-    String(dateObj.getHours()) +
+    String(newDate.getHours()).padStart(2, "0") +
     ":" +
-    String(dateObj.getMinutes()) +
+    String(newDate.getMinutes()).padStart(2, "0") +
     ":" +
-    String(dateObj.getSeconds());
+    String(newDate.getSeconds()).padStart(2, "0");
   return formattedDate;
 }
 
-export function convertToDateObject(data, key, index) {
-  return data.forEach((item) => {
-    //item.details[0].value = new Date(item.details[0].value);
-    item[key][index].value = new Date(item[key][index].value);
+export function changeArrayValue(array, indexToBeChanged, prop, value) {
+  return array.map((item, index) => {
+    if (Number(index) !== Number(indexToBeChanged)) {
+      return item;
+    }
+    return {
+      ...item,
+      [prop]: value,
+    };
   });
 }
 
-export function arraySort(array) {
-  array.sort((a, b) => a - b);
-}
-
-export function objectSort(obj, key, direction) {
+function objectSort(obj, key, direction) {
   obj.sort(function (a, b) {
     if (direction === "descending") {
       return b[key] - a[key];
@@ -34,23 +36,31 @@ export function objectSort(obj, key, direction) {
   });
 }
 
-export function dateSort(obj, key, index, direction) {
+function dateSort(obj, key, index, prop, direction) {
   obj.sort(function (a, b) {
     if (direction === "descending") {
-      return b[key][index].value - a[key][index].value;
+      return new Date(b[key][index][prop]) - new Date(a[key][index][prop]);
     }
-    return a[key][index].value - b[key][index].value;
+    return new Date(a[key][index][prop]) - new Date(b[key][index][prop]);
   });
 }
 
 export function sortData(data, sortBy, sortDirection) {
+  const newCopyObj = data.map((item) => {
+    return {
+      ...item,
+    };
+  });
+
   switch (sortBy) {
     case "date":
-      dateSort(data, "details", 0, sortDirection);
+      dateSort(newCopyObj, "details", 0, "value", sortDirection);
       break;
     case "id":
-      objectSort(data, "id", sortDirection);
+      objectSort(newCopyObj, "id", sortDirection);
       break;
     default:
   }
+
+  return newCopyObj;
 }

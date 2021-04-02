@@ -27,6 +27,7 @@ const CardNavBar = ({ cardsData, index }) => {
   const displayDetails = () => {
     //customize below to specify which details to be displayed and their order from left to right (array index)
     const details = [
+      cardsData.details[4],
       cardsData.details[7],
       cardsData.details[3],
       cardsData.details[5],
@@ -41,7 +42,7 @@ const CardNavBar = ({ cardsData, index }) => {
           <li>location</li>
           <li>media</li>
         </ul>
-        <div>
+        <div className="navline-container">
           <div id="under-line-navbar"></div>
           <div className="navbar-underline"></div>
         </div>
@@ -52,12 +53,14 @@ const CardNavBar = ({ cardsData, index }) => {
             {displayDetails().map((item, index) => {
               return (
                 <div key={`item-${index}`}>
-                  {typeof item.value !== "object" ? (
-                    <div key={`row-${index}`} className="details-tab-flex">
-                      <h5 key={`h-${index}`}>{item.title}</h5>
+                  <div key={`row-${index}`} className="details-tab-flex">
+                    <h5 key={`h-${index}`}>{item.title}</h5>
+                    {!item.detail ? (
                       <p key={`d-${index}`}>{item["value"]}</p>
-                    </div>
-                  ) : null}
+                    ) : (
+                      <p key={`d-${index}`}>{item["detail"]}</p>
+                    )}
+                  </div>
                 </div>
               );
             })}
