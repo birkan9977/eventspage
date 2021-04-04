@@ -31,7 +31,7 @@ const CardNavBar = ({ cardsData, index }) => {
     if (item.hasOwnProperty("detail")) {
       if (customReducer(cardsData, ...item.detail) !== undefined) {
         return customReducer(cardsData, ...item.detail);
-      } 
+      }
     }
     return customReducer(cardsData, ...item.value);
   };
