@@ -109,7 +109,7 @@ export default function ActionPopup({ handleClose, handlePopupResult }) {
           ) : null}
           {activeTabIndex === 1 ? (
             <div className="select-action-options-container">
-              {actionData.map((item) => {
+              {actionData.map((item,index) => {
                 return (
                   <ActionOptions
                     option={item.option}
@@ -117,6 +117,7 @@ export default function ActionPopup({ handleClose, handlePopupResult }) {
                     text={item.text}
                     handleSelectedOption={handleSelectedOption}
                     selectedOption={selectedOption}
+                    key={`a-${index}`}
                   />
                 );
               })}

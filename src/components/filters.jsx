@@ -1,8 +1,7 @@
 import { useContext } from "react";
 import AppContext from "../app/context";
 import { changeFilter, defaultFilter } from "../store/reducerActions";
-import { sortDirection } from "../data/filters-data"
-
+import { sortDirection } from "../data/filters-data";
 
 const Filters = ({ columnFilters }) => {
   const { filters, dispatch } = useContext(AppContext);

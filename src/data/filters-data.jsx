@@ -1,5 +1,3 @@
-
-
 export const sortDirection = [
   {
     name: "Azalan",
@@ -10,4 +8,3 @@ export const sortDirection = [
     value: 1,
   },
 ];
-

@@ -1,10 +1,11 @@
 //customize columns data
 export default function columnsData(data) {
+  const arrayIndex = [0, 1, 2, 6, 4];
   return [
     {
-      address: ["details", 0, "value"],
+      address: ["details", arrayIndex[0], "value"],
       type: "date",
-      name: data["details"][0]["title"],
+      name: data["details"][arrayIndex[0]]["title"],
     },
     {
       address: ["id"],
@@ -12,24 +13,48 @@ export default function columnsData(data) {
       name: "Id",
     },
     {
-      address: ["details", 1, "value"],
+      address: ["details", arrayIndex[1], "value"],
       type: "string",
-      name: data["details"][1]["title"],
+      name: data["details"][arrayIndex[1]]["title"],
     },
     {
-      address: ["details", 2, "value"],
+      address: ["details", arrayIndex[2], "value"],
       type: "string",
-      name: data["details"][2]["title"],
+      name: data["details"][arrayIndex[2]]["title"],
     },
     {
-      address: ["details", 6, "value"],
+      address: ["details", arrayIndex[3], "value"],
       type: "string",
-      name: data["details"][6]["title"],
+      name: data["details"][arrayIndex[3]]["title"],
     },
     {
-      address: ["details", 4, "value"],
+      address: ["details", arrayIndex[4], "value"],
       type: "string",
-      name: data["details"][4]["title"],
+      name: data["details"][arrayIndex[4]]["title"],
     },
   ];
+}
+
+export function extraColumns(data) {
+  const arrayIndex = [4, 7, 3, 5];
+  const extrColumnsArray = [
+    {
+      title: data["details"][arrayIndex[0]]["title"],
+      value: ["details", arrayIndex[0], "value"],
+      detail: ["details", arrayIndex[0], "detail"],
+    },
+    {
+      title: data["details"][arrayIndex[1]]["title"],
+      value: ["details", arrayIndex[1], "value"],
+    },
+    {
+      title: data["details"][arrayIndex[2]]["title"],
+      value: ["details", arrayIndex[2], "value"],
+    },
+    {
+      title: data["details"][arrayIndex[2]]["title"],
+      value: ["details", arrayIndex[2], "value"],
+    },
+  ];
+  return extrColumnsArray;
 }

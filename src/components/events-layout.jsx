@@ -71,7 +71,6 @@ const Events = () => {
 
   useEffect(() => {
     if (eventsData.length > 0 && prevValue !== eventsData) {
-      console.log("test");
       const column = columnsInfo.current[Number(filters.sortBy)];
       const sortedData = sortData(
         column.type,

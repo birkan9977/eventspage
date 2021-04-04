@@ -28,11 +28,12 @@ export function changeArrayValue(array, indexToBeChanged, prop, value) {
 }
 
 export function customReducer(obj, ...args) {
-  const reduced = [...args].reduce((acc, cur) => {
-    acc = acc[cur];
+  const initialValue = obj;
+  const reduced = [...args].reduce((accumulator, currentValue) => {
+    accumulator = accumulator[currentValue];
 
-    return acc;
-  }, obj);
+    return accumulator;
+  }, initialValue);
 
   return reduced;
 }
@@ -85,7 +86,7 @@ export function sortData(type, data, sortDirection, ...args) {
   });
 
   //sortDirection: -1 descending, 1 ascending
-  sortDirection = Number(sortDirection)
+  sortDirection = Number(sortDirection);
 
   if (type === "date") {
     dateSort(newCopyObj, sortDirection, ...args);

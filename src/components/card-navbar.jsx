@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import Location from "./location";
 import Media from "./media";
+import { extraColumns } from "../data/columns-data";
+import { customReducer } from "../utilities/helperFunctions";
+
 const CardNavBar = ({ cardsData, index }) => {
   const [selectedTab, setSelectedTab] = useState("details");
 
@@ -24,16 +27,20 @@ const CardNavBar = ({ cardsData, index }) => {
     setSelectedTab(e.target.innerHTML);
   };
 
-  const displayDetails = () => {
-    //customize below to specify which details to be displayed and their order from left to right (array index)
-    const details = [
-      cardsData.details[4],
-      cardsData.details[7],
-      cardsData.details[3],
-      cardsData.details[5],
-    ];
-    return details;
+  const displayDetails = (item) => {
+    let value = "";
+    if (item.hasOwnProperty("detail")) {
+      if (customReducer(cardsData, ...item.detail) !== undefined) {
+        value = customReducer(cardsData, ...item.detail);
+      } else {
+        value = customReducer(cardsData, ...item.value);
+      }
+    } else {
+      value = customReducer(cardsData, ...item.value);
+    }
+    return value;
   };
+
   return (
     <div className="card-container">
       <div className="card-navbar-container">
@@ -48,18 +55,14 @@ const CardNavBar = ({ cardsData, index }) => {
         </div>
       </div>
       <div>
-        {(cardsData && selectedTab) === "details" ? (
+        {cardsData && selectedTab === "details" ? (
           <div className="details-tab">
-            {displayDetails().map((item, index) => {
+            {extraColumns(cardsData).map((item, index) => {
               return (
                 <div key={`item-${index}`}>
                   <div key={`row-${index}`} className="details-tab-flex">
                     <h5 key={`h-${index}`}>{item.title}</h5>
-                    {!item.detail ? (
-                      <p key={`d-${index}`}>{item["value"]}</p>
-                    ) : (
-                      <p key={`d-${index}`}>{item["detail"]}</p>
-                    )}
+                    <p key={`d-${index}`}>{displayDetails(item)}</p>
                   </div>
                 </div>
               );
@@ -69,12 +72,12 @@ const CardNavBar = ({ cardsData, index }) => {
       </div>
 
       <div>
-        {(cardsData && selectedTab) === "location" ? (
+        {cardsData && selectedTab === "location" ? (
           <Location locationData={cardsData.location} index={index} />
         ) : null}
       </div>
       <div>
-        {(cardsData && selectedTab) === "media" ? (
+        {cardsData && selectedTab === "media" ? (
           <Media mediaData={cardsData.media} />
         ) : null}
       </div>
