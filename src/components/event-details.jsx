@@ -44,7 +44,7 @@ const EventDetails = ({ index, selectedDataItem, changeData }) => {
           document
             .getElementById("buttonsContainer")
             .classList.add("buttons-container-hide");
-          changeData({ value: "no action needed" });
+          changeData({ value: "No action needed" });
           break;
         case "takeAction":
           setDisplayActionPopup(true);

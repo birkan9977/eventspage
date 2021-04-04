@@ -10,15 +10,66 @@ const Events = () => {
   const [rawData, setRawData] = useState([]);
   const [eventsData, setEventsData] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [isDataSorted, setIsDataSorted] = useState(false);
+  const [isDataReady, setIsDataReady] = useState(false);
   const [dataSortToggle, setDataSortToggle] = useState(false);
   const prevValueRef = useRef([]);
+
+  const columns = useRef([]);
+  const columnFilters = useRef();
+  const prevValue = prevValueRef.current;
   //load data
   useEffect(() => {
     //simulating fetching data via an api call with promise
     getData()
       .then((response) => {
+        const data = response.data;
         setRawData(response.data);
+        return data[0];
+      })
+      .then((data) => {
+        //console.log(data);
+        columns.current = [
+          {
+            address: ["details", 0, "value"],
+            type: "date",
+            name: data["details"][0]["title"],
+          },
+          {
+            address: ["id"],
+            type: "number",
+            name: "Id",
+          },
+          {
+            address: ["details", 1, "value"],
+            type: "string",
+            name: data["details"][1]["title"],
+          },
+          {
+            address: ["details", 2, "value"],
+            type: "string",
+            name: data["details"][2]["title"],
+          },
+          {
+            address: ["details", 6, "value"],
+            type: "string",
+            name: data["details"][6]["title"],
+          },
+          {
+            address: ["details", 4, "value"],
+            type: "string",
+            name: data["details"][4]["title"],
+          },
+        ];
+        //console.log(columns.current);
+        return columns.current;
+      })
+      .then((columns) => {
+        columnFilters.current = columns.map((column, index) => {
+          return {
+            name: column.name,
+            value: index,
+          };
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -28,42 +79,43 @@ const Events = () => {
   //makes sure data is loaded before calling any child component
   useEffect(() => {
     if (rawData.length > 0) {
+      //console.log('rawData',rawData)
+      const column = columns.current[filters.sortBy];
       const sortedData = sortData(
+        column.type,
         rawData,
-        filters.sortBy,
-        filters.sortDirection
+        Number(filters.sortDirection),
+        ...column["address"]
       );
       setEventsData(sortedData);
-      setIsDataSorted(true);
+      setIsDataReady(true);
       setDataSortToggle((state) => !state);
       setSelectedIndex(-1);
-      return () => {
-        sessionStorage.setItem("sortBy", filters.sortBy);
-        sessionStorage.setItem("sortDirection", filters.sortDirection);
-      };
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawData]);
 
   useEffect(() => {
-    const sortedData = sortData(
-      eventsData,
-      filters.sortBy,
-      filters.sortDirection
-    );
-    setEventsData(sortedData);
-    setDataSortToggle((state) => !state);
-    setSelectedIndex(-1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters]);
+    if (eventsData.length > 0 && prevValue !== eventsData) {
+      console.log("test");
+      const column = columns.current[Number(filters.sortBy)];
+      const sortedData = sortData(
+        column.type,
+        eventsData,
+        Number(filters.sortDirection),
+        ...column["address"]
+      );
+      setEventsData(sortedData);
+      setDataSortToggle((state) => !state);
+      setSelectedIndex(-1);
+    }
 
-  const prevValue = prevValueRef.current;
-
-  useEffect(() => {
+    sessionStorage.setItem("sortBy", Number(filters.sortBy));
+    sessionStorage.setItem("sortDirection", Number(filters.sortDirection));
     prevValueRef.current = eventsData;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventsData]);
+  }, [filters]);
 
   const handleChangeSelectedIndex = (index) => {
     setSelectedIndex(index);
@@ -101,10 +153,12 @@ const Events = () => {
         <div>
           <h1>Events</h1>
 
-          <Filters />
+          {isDataReady ? (
+            <Filters columnFilters={columnFilters.current} />
+          ) : null}
         </div>
         <div>
-          {isDataSorted ? (
+          {isDataReady ? (
             <EventsList
               eventsData={eventsData}
               handleSelected={handleChangeSelectedIndex}
@@ -117,7 +171,7 @@ const Events = () => {
       <div className="event-details">
         <h1>Event Details</h1>
         <div>
-          {isDataSorted ? (
+          {isDataReady ? (
             <EventDetails
               index={selectedIndex}
               selectedDataItem={eventsData[selectedIndex]}

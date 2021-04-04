@@ -1,3 +1,6 @@
+//@rules load reset
+@use './reset';
+
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,300;1,400&display=swap");
 
 /* functions */
@@ -14,100 +17,6 @@ $gray-tone: #ebecef;
 $black-tone: #454f63;
 $dark-blue: #172c49;
 $details-panel-navmedia-width: 1180;
-/* 
----------------------------------------------
-reset
---------------------------------------------- 
-*/
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-div pre,
-a,
-abbr,
-acronym,
-
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-font,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-figure,
-header,
-nav,
-section,
-article,
-aside,
-footer,
-figcaption {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-/* Base reset */
-* {
-  margin: 0;
-  padding: 0;
-}
-
-/* box-sizing and font sizing */
-*,
-*::before,
-*::after {
-  box-sizing: inherit;
-}
-
-//reset ends
 
 //globals
 h1 {
@@ -566,6 +475,7 @@ body {
   width: 16rem;
   font-size: 1.3rem;
   text-align: center;
+  cursor: pointer;
 }
 
 audio {

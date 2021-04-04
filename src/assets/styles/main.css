@@ -1,11 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,300;1,400&display=swap");
-/* functions */
-/* Custom properties/variables  */
-/* 
----------------------------------------------
-reset
---------------------------------------------- 
-*/
 html,
 body,
 div,
@@ -93,6 +86,8 @@ h6 {
   box-sizing: inherit;
 }
 
+/* functions */
+/* Custom properties/variables  */
 h1 {
   text-align: left;
   color: #172c49;
@@ -251,7 +246,7 @@ body {
 
 @media (max-width: 73.75em) {
   .buttons-container .btn-action,
-.buttons-container .btn-noaction {
+  .buttons-container .btn-noaction {
     width: 100%;
   }
 }
@@ -524,6 +519,7 @@ body {
   width: 16rem;
   font-size: 1.3rem;
   text-align: center;
+  cursor: pointer;
 }
 
 audio {
