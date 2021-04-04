@@ -27,7 +27,7 @@ export function changeArrayValue(array, indexToBeChanged, prop, value) {
   });
 }
 
-function reducer(obj, ...args) {
+export function customReducer(obj, ...args) {
   const reduced = [...args].reduce((acc, cur) => {
     acc = acc[cur];
 
@@ -40,16 +40,16 @@ function reducer(obj, ...args) {
 function numberSort(obj, sortDirection, ...args) {
   obj.sort(function (a, b) {
     if (sortDirection === -1) {
-      return reducer(b, ...args) - reducer(a, ...args);
+      return customReducer(b, ...args) - customReducer(a, ...args);
     }
-    return reducer(a, ...args) - reducer(b, ...args);
+    return customReducer(a, ...args) - customReducer(b, ...args);
   });
 }
 
 function stringSort(obj, sortDirection, ...args) {
   obj.sort(function (a, b) {
-    const stringA = reducer(a, ...args).toUpperCase();
-    const stringB = reducer(b, ...args).toUpperCase();
+    const stringA = customReducer(a, ...args).toUpperCase();
+    const stringB = customReducer(b, ...args).toUpperCase();
 
     if (stringA < stringB) {
       return sortDirection === 1 ? -1 : 1;
@@ -66,9 +66,14 @@ function stringSort(obj, sortDirection, ...args) {
 function dateSort(obj, sortDirection, ...args) {
   obj.sort(function (a, b) {
     if (sortDirection === -1) {
-      return new Date(reducer(b, ...args)) - new Date(reducer(a, ...args));
+      return (
+        new Date(customReducer(b, ...args)) -
+        new Date(customReducer(a, ...args))
+      );
     }
-    return new Date(reducer(a, ...args)) - new Date(reducer(b, ...args));
+    return (
+      new Date(customReducer(a, ...args)) - new Date(customReducer(b, ...args))
+    );
   });
 }
 
@@ -79,12 +84,15 @@ export function sortData(type, data, sortDirection, ...args) {
     };
   });
 
+  //sortDirection: -1 descending, 1 ascending
+  sortDirection = Number(sortDirection)
+
   if (type === "date") {
-    dateSort(newCopyObj, Number(sortDirection), ...args);
+    dateSort(newCopyObj, sortDirection, ...args);
   } else if (type === "number") {
-    numberSort(newCopyObj, Number(sortDirection), ...args);
+    numberSort(newCopyObj, sortDirection, ...args);
   } else if (type === "string") {
-    stringSort(newCopyObj, Number(sortDirection), ...args);
+    stringSort(newCopyObj, sortDirection, ...args);
   }
   return newCopyObj;
 }

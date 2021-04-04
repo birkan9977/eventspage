@@ -5,6 +5,8 @@ import getData from "../services/service";
 import Filters from "./filters";
 import { sortData } from "../utilities/helperFunctions";
 import EventDetails from "./event-details";
+import columnsData from "../data/columns-data";
+
 const Events = () => {
   const { filters } = useContext(AppContext); //context filter variables
   const [rawData, setRawData] = useState([]);
@@ -12,59 +14,28 @@ const Events = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isDataReady, setIsDataReady] = useState(false);
   const [dataSortToggle, setDataSortToggle] = useState(false);
-  const prevValueRef = useRef([]);
 
-  const columns = useRef([]);
+  const prevValueRef = useRef([]);
+  const columnsInfo = useRef([]);
   const columnFilters = useRef();
   const prevValue = prevValueRef.current;
+
   //load data
   useEffect(() => {
-    //simulating fetching data via an api call with promise
+    //simulate fetching data via an api call with promise
     getData()
       .then((response) => {
         const data = response.data;
         setRawData(response.data);
         return data[0];
       })
-      .then((data) => {
-        //console.log(data);
-        columns.current = [
-          {
-            address: ["details", 0, "value"],
-            type: "date",
-            name: data["details"][0]["title"],
-          },
-          {
-            address: ["id"],
-            type: "number",
-            name: "Id",
-          },
-          {
-            address: ["details", 1, "value"],
-            type: "string",
-            name: data["details"][1]["title"],
-          },
-          {
-            address: ["details", 2, "value"],
-            type: "string",
-            name: data["details"][2]["title"],
-          },
-          {
-            address: ["details", 6, "value"],
-            type: "string",
-            name: data["details"][6]["title"],
-          },
-          {
-            address: ["details", 4, "value"],
-            type: "string",
-            name: data["details"][4]["title"],
-          },
-        ];
-        //console.log(columns.current);
-        return columns.current;
+      .then((dataFirstRow) => {
+        //get column definitions from first row - customize 'columnsData' to change column definitions
+        columnsInfo.current = columnsData(dataFirstRow);
+        return columnsInfo.current;
       })
-      .then((columns) => {
-        columnFilters.current = columns.map((column, index) => {
+      .then((columnsInfo) => {
+        columnFilters.current = columnsInfo.map((column, index) => {
           return {
             name: column.name,
             value: index,
@@ -80,7 +51,7 @@ const Events = () => {
   useEffect(() => {
     if (rawData.length > 0) {
       //console.log('rawData',rawData)
-      const column = columns.current[filters.sortBy];
+      const column = columnsInfo.current[filters.sortBy];
       const sortedData = sortData(
         column.type,
         rawData,
@@ -99,7 +70,7 @@ const Events = () => {
   useEffect(() => {
     if (eventsData.length > 0 && prevValue !== eventsData) {
       console.log("test");
-      const column = columns.current[Number(filters.sortBy)];
+      const column = columnsInfo.current[Number(filters.sortBy)];
       const sortedData = sortData(
         column.type,
         eventsData,
@@ -160,7 +131,8 @@ const Events = () => {
         <div>
           {isDataReady ? (
             <EventsList
-              eventsData={eventsData}
+              rows={eventsData}
+              columnsInfo={columnsInfo.current}
               handleSelected={handleChangeSelectedIndex}
               selectedIndex={selectedIndex}
               dataSortToggle={dataSortToggle}

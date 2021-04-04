@@ -22,10 +22,10 @@ const ListItems = ({ columns, rowIndex }) => {
           return (
             <div key={`list-items-${index}`}>
               <li className="list-item-title" key={`title-${index}`}>
-                {column.title}
+                {column.name}
               </li>
               <li onChange={handleChange(column.value)} key={`value-${index}`}>
-                {column.title === "Tarih"
+                {column.type === "date"
                   ? convertToDateString(column.value)
                   : column.value}
               </li>
