@@ -109,7 +109,7 @@ export default function ActionPopup({ handleClose, handlePopupResult }) {
           ) : null}
           {activeTabIndex === 1 ? (
             <div className="select-action-options-container">
-              {actionData.map((item,index) => {
+              {actionData.map((item, index) => {
                 return (
                   <ActionOptions
                     option={item.option}
