@@ -27,9 +27,9 @@ export function changeArrayValue(array, indexToBeChanged, prop, value) {
   });
 }
 
-export function customReducer(obj, ...args) {
+export function customReducer(obj, keysIndexesArray) {
   const initialValue = obj;
-  const reduced = [...args].reduce((accumulator, currentValue) => {
+  const reduced = keysIndexesArray.reduce((accumulator, currentValue) => {
     accumulator = accumulator[currentValue];
 
     return accumulator;
@@ -38,19 +38,19 @@ export function customReducer(obj, ...args) {
   return reduced;
 }
 
-function numberSort(obj, sortDirection, ...args) {
+function numberSort(obj, sortDirection, keysIndexesArray) {
   obj.sort(function (a, b) {
     if (sortDirection === -1) {
-      return customReducer(b, ...args) - customReducer(a, ...args);
+      return customReducer(b, keysIndexesArray) - customReducer(a, keysIndexesArray);
     }
-    return customReducer(a, ...args) - customReducer(b, ...args);
+    return customReducer(a, keysIndexesArray) - customReducer(b, keysIndexesArray);
   });
 }
 
-function stringSort(obj, sortDirection, ...args) {
+function stringSort(obj, sortDirection, keysIndexesArray) {
   obj.sort(function (a, b) {
-    const stringA = customReducer(a, ...args).toUpperCase();
-    const stringB = customReducer(b, ...args).toUpperCase();
+    const stringA = customReducer(a, keysIndexesArray).toUpperCase();
+    const stringB = customReducer(b, keysIndexesArray).toUpperCase();
 
     if (stringA < stringB) {
       return sortDirection === 1 ? -1 : 1;
@@ -64,21 +64,21 @@ function stringSort(obj, sortDirection, ...args) {
   });
 }
 
-function dateSort(obj, sortDirection, ...args) {
+function dateSort(obj, sortDirection, keysIndexesArray) {
   obj.sort(function (a, b) {
     if (sortDirection === -1) {
       return (
-        new Date(customReducer(b, ...args)) -
-        new Date(customReducer(a, ...args))
+        new Date(customReducer(b, keysIndexesArray)) -
+        new Date(customReducer(a, keysIndexesArray))
       );
     }
     return (
-      new Date(customReducer(a, ...args)) - new Date(customReducer(b, ...args))
+      new Date(customReducer(a, keysIndexesArray)) - new Date(customReducer(b, keysIndexesArray))
     );
   });
 }
 
-export function sortData(type, data, sortDirection, ...args) {
+export function sortData(type, data, sortDirection, keysIndexesArray) {
   const newCopyObj = data.map((item) => {
     return {
       ...item,
@@ -89,11 +89,11 @@ export function sortData(type, data, sortDirection, ...args) {
   sortDirection = Number(sortDirection);
 
   if (type === "date") {
-    dateSort(newCopyObj, sortDirection, ...args);
+    dateSort(newCopyObj, sortDirection, keysIndexesArray);
   } else if (type === "number") {
-    numberSort(newCopyObj, sortDirection, ...args);
+    numberSort(newCopyObj, sortDirection, keysIndexesArray);
   } else if (type === "string") {
-    stringSort(newCopyObj, sortDirection, ...args);
+    stringSort(newCopyObj, sortDirection, keysIndexesArray);
   }
   return newCopyObj;
 }

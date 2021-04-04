@@ -29,11 +29,11 @@ const CardNavBar = ({ cardsData, index }) => {
 
   const displayDetails = (item) => {
     if (item.hasOwnProperty("detail")) {
-      if (customReducer(cardsData, ...item.detail) !== undefined) {
-        return customReducer(cardsData, ...item.detail);
+      if (customReducer(cardsData, item.detail) !== undefined) {
+        return customReducer(cardsData, item.detail);
       }
     }
-    return customReducer(cardsData, ...item.value);
+    return customReducer(cardsData, item.value);
   };
 
   return (

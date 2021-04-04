@@ -94,7 +94,7 @@ const EventsList = ({
                 columns={columnsInfo.map((column) => {
                   return {
                     ...column,
-                    value: customReducer(row, ...column.address),
+                    value: customReducer(row, column.address),
                   };
                 })}
                 rowIndex={index}

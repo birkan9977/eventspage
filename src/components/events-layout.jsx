@@ -58,7 +58,7 @@ const Events = () => {
         column.type,
         rawData,
         Number(filters.sortDirection),
-        ...column["address"]
+        column["address"]
       );
       setEventsData(sortedData);
       setIsDataReady(true);
@@ -76,7 +76,7 @@ const Events = () => {
         column.type,
         eventsData,
         Number(filters.sortDirection),
-        ...column["address"]
+        column["address"]
       );
       setEventsData(sortedData);
       setDataSortToggle((state) => !state);
