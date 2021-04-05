@@ -41,9 +41,13 @@ export function customReducer(obj, keysIndexesArray) {
 function numberSort(obj, sortDirection, keysIndexesArray) {
   obj.sort(function (a, b) {
     if (sortDirection === -1) {
-      return customReducer(b, keysIndexesArray) - customReducer(a, keysIndexesArray);
+      return (
+        customReducer(b, keysIndexesArray) - customReducer(a, keysIndexesArray)
+      );
     }
-    return customReducer(a, keysIndexesArray) - customReducer(b, keysIndexesArray);
+    return (
+      customReducer(a, keysIndexesArray) - customReducer(b, keysIndexesArray)
+    );
   });
 }
 
@@ -73,7 +77,8 @@ function dateSort(obj, sortDirection, keysIndexesArray) {
       );
     }
     return (
-      new Date(customReducer(a, keysIndexesArray)) - new Date(customReducer(b, keysIndexesArray))
+      new Date(customReducer(a, keysIndexesArray)) -
+      new Date(customReducer(b, keysIndexesArray))
     );
   });
 }

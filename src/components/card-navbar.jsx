@@ -3,19 +3,26 @@ import Location from "./location";
 import Media from "./media";
 import { extraColumns } from "../data/columns-data";
 import { customReducer } from "../utilities/helperFunctions";
+import { useMediaQuery } from "react-responsive";
 
 const CardNavBar = ({ cardsData, index }) => {
-  const [selectedTab, setSelectedTab] = useState("details");
+  const [selectedTab, setSelectedTab] = useState(0); //details
+  const moveStyleX = {
+    transform: `translateX(${selectedTab * 10}rem)`,
+    opacity: "1",
+  };
+  const moveStyleY = {
+    transform: `translateY(${selectedTab * 2.5}rem)`,
+    opacity: "1",
+  };
+
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 73.75em)" });
 
   useEffect(() => {
-    const elem = document.getElementById("under-line-navbar");
-    const clsName = `${selectedTab}-underline`;
-    elem.className = `underline-default ${clsName}`;
-
     const listElements = document.querySelectorAll(".card-navbar>li");
 
-    listElements.forEach((el) => {
-      if (el.innerHTML !== selectedTab) {
+    listElements.forEach((el, index) => {
+      if (index !== selectedTab) {
         el.className = "tab-unselected";
       } else {
         el.className = "tab-selected";
@@ -24,7 +31,7 @@ const CardNavBar = ({ cardsData, index }) => {
   }, [selectedTab, cardsData]);
 
   const handleChangeNavTab = (e) => {
-    setSelectedTab(e.target.innerHTML);
+    setSelectedTab(e.target.value);
   };
 
   const displayDetails = (item) => {
@@ -40,17 +47,21 @@ const CardNavBar = ({ cardsData, index }) => {
     <div className="card-container">
       <div className="card-navbar-container">
         <ul className="card-navbar" onClick={handleChangeNavTab}>
-          <li>details</li>
-          <li>location</li>
-          <li>media</li>
+          <li value={0}>details</li>
+          <li value={1}>location</li>
+          <li value={2}>media</li>
         </ul>
         <div className="navline-container">
-          <div id="under-line-navbar"></div>
-          <div className="navbar-underline"></div>
+          <div
+            id="moving-line"
+            className="underline-default"
+            style={isSmallScreen ? moveStyleY : moveStyleX}
+          ></div>
+          <div className="navbar-fixed-underline"></div>
         </div>
       </div>
       <div>
-        {cardsData && selectedTab === "details" ? (
+        {cardsData && selectedTab === 0 ? (
           <div className="details-tab">
             {extraColumns(cardsData).map((item, index) => {
               return (
@@ -67,12 +78,12 @@ const CardNavBar = ({ cardsData, index }) => {
       </div>
 
       <div>
-        {cardsData && selectedTab === "location" ? (
+        {cardsData && selectedTab === 1 ? (
           <Location locationData={cardsData.location} index={index} />
         ) : null}
       </div>
       <div>
-        {cardsData && selectedTab === "media" ? (
+        {cardsData && selectedTab === 2 ? (
           <Media mediaData={cardsData.media} />
         ) : null}
       </div>
