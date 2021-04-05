@@ -1,56 +1,104 @@
-export function formatDate(dateObj) {
+export function formatDate(date) {
+  const newDate = new Date(date);
   const formattedDate =
-    String(dateObj.getDate()).padStart(2, "0") +
+    String(newDate.getDate()).padStart(2, "0") +
     "/" +
-    String(dateObj.getMonth() + 1).padStart(2, "0") +
+    String(newDate.getMonth() + 1).padStart(2, "0") +
     "/" +
-    String(dateObj.getFullYear()) +
+    String(newDate.getFullYear()) +
     " " +
-    String(dateObj.getHours()) +
+    String(newDate.getHours()).padStart(2, "0") +
     ":" +
-    String(dateObj.getMinutes()) +
+    String(newDate.getMinutes()).padStart(2, "0") +
     ":" +
-    String(dateObj.getSeconds());
+    String(newDate.getSeconds()).padStart(2, "0");
   return formattedDate;
 }
 
-export function convertToDateObject(data, key, index) {
-  return data.forEach((item) => {
-    //item.details[0].value = new Date(item.details[0].value);
-    item[key][index].value = new Date(item[key][index].value);
-  });
-}
-
-export function arraySort(array) {
-  array.sort((a, b) => a - b);
-}
-
-export function objectSort(obj, key, direction) {
-  obj.sort(function (a, b) {
-    if (direction === "descending") {
-      return b[key] - a[key];
+export function changeArrayValue(array, indexToBeChanged, prop, value) {
+  return array.map((item, index) => {
+    if (Number(index) !== Number(indexToBeChanged)) {
+      return item;
     }
-    return a[key] - b[key];
+    return {
+      ...item,
+      [prop]: value,
+    };
   });
 }
 
-export function dateSort(obj, key, index, direction) {
+export function customReducer(obj, keysIndexesArray) {
+  const initialValue = obj;
+  const reduced = keysIndexesArray.reduce((accumulator, currentValue) => {
+    accumulator = accumulator[currentValue];
+
+    return accumulator;
+  }, initialValue);
+
+  return reduced;
+}
+
+function numberSort(obj, sortDirection, keysIndexesArray) {
   obj.sort(function (a, b) {
-    if (direction === "descending") {
-      return b[key][index].value - a[key][index].value;
+    if (sortDirection === -1) {
+      return (
+        customReducer(b, keysIndexesArray) - customReducer(a, keysIndexesArray)
+      );
     }
-    return a[key][index].value - b[key][index].value;
+    return (
+      customReducer(a, keysIndexesArray) - customReducer(b, keysIndexesArray)
+    );
   });
 }
 
-export function sortData(data, sortBy, sortDirection) {
-  switch (sortBy) {
-    case "date":
-      dateSort(data, "details", 0, sortDirection);
-      break;
-    case "id":
-      objectSort(data, "id", sortDirection);
-      break;
-    default:
+function stringSort(obj, sortDirection, keysIndexesArray) {
+  obj.sort(function (a, b) {
+    const stringA = customReducer(a, keysIndexesArray).toUpperCase();
+    const stringB = customReducer(b, keysIndexesArray).toUpperCase();
+
+    if (stringA < stringB) {
+      return sortDirection === 1 ? -1 : 1;
+    }
+    if (stringA > stringB) {
+      return sortDirection === 1 ? 1 : -1;
+    }
+
+    //equal
+    return 0;
+  });
+}
+
+function dateSort(obj, sortDirection, keysIndexesArray) {
+  obj.sort(function (a, b) {
+    if (sortDirection === -1) {
+      return (
+        new Date(customReducer(b, keysIndexesArray)) -
+        new Date(customReducer(a, keysIndexesArray))
+      );
+    }
+    return (
+      new Date(customReducer(a, keysIndexesArray)) -
+      new Date(customReducer(b, keysIndexesArray))
+    );
+  });
+}
+
+export function sortData(type, data, sortDirection, keysIndexesArray) {
+  const newCopyObj = data.map((item) => {
+    return {
+      ...item,
+    };
+  });
+
+  //sortDirection: -1 descending, 1 ascending
+  sortDirection = Number(sortDirection);
+
+  if (type === "date") {
+    dateSort(newCopyObj, sortDirection, keysIndexesArray);
+  } else if (type === "number") {
+    numberSort(newCopyObj, sortDirection, keysIndexesArray);
+  } else if (type === "string") {
+    stringSort(newCopyObj, sortDirection, keysIndexesArray);
   }
+  return newCopyObj;
 }

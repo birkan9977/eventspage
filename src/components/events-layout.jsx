@@ -1,24 +1,48 @@
-import { useState, useEffect, useContext } from "react";
+//test for push with github ssh ***
+
+import { useState, useEffect, useContext, useRef } from "react";
 import AppContext from "../app/context";
 import EventsList from "./events-list";
 import getData from "../services/service";
 import Filters from "./filters";
-import { sortData, convertToDateObject } from "../utilities/helperFunctions";
+import { sortData } from "../utilities/helperFunctions";
 import EventDetails from "./event-details";
+import columnsData from "../data/columns-data";
+
 const Events = () => {
   const { filters } = useContext(AppContext); //context filter variables
+  const [rawData, setRawData] = useState([]);
   const [eventsData, setEventsData] = useState([]);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [sortedToggle, setSortedToggle] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [stateToggle, setUpdateStateToggle] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isDataReady, setIsDataReady] = useState(false);
+  const [dataSortToggle, setDataSortToggle] = useState(false);
+
+  const prevValueRef = useRef([]);
+  const columnsInfo = useRef([]);
+  const columnFilters = useRef();
+  const prevValue = prevValueRef.current;
 
   //load data
   useEffect(() => {
-    //simulating fetching data via an api call with promise
+    //simulate fetching data via an api call with promise
     getData()
       .then((response) => {
-        setEventsData(response.data);
+        const data = response.data;
+        setRawData(response.data);
+        return data[0];
+      })
+      .then((dataFirstRow) => {
+        //get column definitions from first row - customize 'columnsData' to change column definitions
+        columnsInfo.current = columnsData(dataFirstRow);
+        return columnsInfo.current;
+      })
+      .then((columnsInfo) => {
+        columnFilters.current = columnsInfo.map((column, index) => {
+          return {
+            name: column.name,
+            value: index,
+          };
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -27,33 +51,71 @@ const Events = () => {
 
   //makes sure data is loaded before calling any child component
   useEffect(() => {
-    if (eventsData.length > 0) {
-      setIsDataLoaded(true);
-      sortData(eventsData, filters.sortBy, filters.sortDirection);
-      convertToDateObject(eventsData, "details", 0);
-      setSortedToggle((state) => !state);
-      sessionStorage.setItem("sortBy", filters.sortBy);
-      sessionStorage.setItem("sortDirection", filters.sortDirection);
+    if (rawData.length > 0) {
+      //console.log('rawData',rawData)
+      const column = columnsInfo.current[filters.sortBy];
+      const sortedData = sortData(
+        column.type,
+        rawData,
+        Number(filters.sortDirection),
+        column["address"]
+      );
+      setEventsData(sortedData);
+      setIsDataReady(true);
+      setDataSortToggle((state) => !state);
+      setSelectedIndex(-1);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventsData, filters]);
+  }, [rawData]);
 
-  //sets 'selectedIndex' state variable to null after each sorting
   useEffect(() => {
-    setSelectedIndex(null);
-  }, [sortedToggle]);
+    if (eventsData.length > 0 && prevValue !== eventsData) {
+      const column = columnsInfo.current[Number(filters.sortBy)];
+      const sortedData = sortData(
+        column.type,
+        eventsData,
+        Number(filters.sortDirection),
+        column["address"]
+      );
+      setEventsData(sortedData);
+      setDataSortToggle((state) => !state);
+      setSelectedIndex(-1);
+    }
+
+    sessionStorage.setItem("sortBy", Number(filters.sortBy));
+    sessionStorage.setItem("sortDirection", Number(filters.sortDirection));
+    prevValueRef.current = eventsData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
   const handleChangeSelectedIndex = (index) => {
     setSelectedIndex(index);
   };
 
-  const handleChangeData = (e) => {
-    let newObj = Object.assign({}, eventsData[selectedIndex]);
+  const handleChangeData = (evt) => {
+    if (selectedIndex >= 0) {
+      const newObj = eventsData.map((item, itemIndex) => {
+        if (itemIndex === selectedIndex) {
+          return {
+            ...item,
+            details: item.details.map((detailsItem, detailsIndex) => {
+              if (detailsIndex === 4) {
+                return {
+                  ...detailsItem,
+                  value: evt.value,
+                  detail: evt.detail,
+                  closeToEdit: evt.closeToEdit,
+                };
+              }
+              return detailsItem;
+            }),
+          };
+        }
+        return item;
+      });
 
-    if (selectedIndex) {
-      newObj["details"][4]["value"] = "No action needed";
-      setUpdateStateToggle((state) => !state);
+      setEventsData(newObj);
     }
   };
 
@@ -63,25 +125,33 @@ const Events = () => {
         <div>
           <h1>Events</h1>
 
-          <Filters />
+          {isDataReady ? (
+            <Filters columnFilters={columnFilters.current} />
+          ) : null}
         </div>
-        {isDataLoaded ? (
-          <EventsList
-            eventsData={eventsData}
-            handleSelected={handleChangeSelectedIndex}
-            selectedIndex={selectedIndex}
-            sortedToggle={sortedToggle}
-          />
-        ) : null}
+        <div>
+          {isDataReady ? (
+            <EventsList
+              rows={eventsData}
+              columnsInfo={columnsInfo.current}
+              handleSelected={handleChangeSelectedIndex}
+              selectedIndex={selectedIndex}
+              dataSortToggle={dataSortToggle}
+            />
+          ) : null}
+        </div>
       </div>
       <div className="event-details">
         <h1>Event Details</h1>
-
-        <EventDetails
-          index={selectedIndex}
-          selectedDataItem={eventsData[selectedIndex]}
-          changeData={handleChangeData}
-        />
+        <div>
+          {isDataReady ? (
+            <EventDetails
+              index={selectedIndex}
+              selectedDataItem={eventsData[selectedIndex]}
+              changeData={handleChangeData}
+            />
+          ) : null}
+        </div>
       </div>
     </div>
   );

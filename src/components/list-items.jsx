@@ -5,11 +5,13 @@ const ListItems = ({ columns, rowIndex }) => {
     return formatDate(dt);
   };
 
-  const handleChange = (columnValue) => {
-    if (columnValue === "-") {
-      const elem = document.getElementById(`clicable-list-item-${rowIndex}`);
-      if (elem) {
+  const handleChange = (columnValue, selectedIndex) => {
+    const elem = document.getElementById(`clicable-list-item-${rowIndex}`);
+    if (elem) {
+      if (columnValue === "-") {
         elem.classList.add("noaction-identifier");
+      } else {
+        elem.classList.remove("noaction-identifier");
       }
     }
   };
@@ -20,10 +22,10 @@ const ListItems = ({ columns, rowIndex }) => {
           return (
             <div key={`list-items-${index}`}>
               <li className="list-item-title" key={`title-${index}`}>
-                {column.title}
+                {column.name}
               </li>
               <li onChange={handleChange(column.value)} key={`value-${index}`}>
-                {typeof column.value === "object"
+                {column.type === "date"
                   ? convertToDateString(column.value)
                   : column.value}
               </li>

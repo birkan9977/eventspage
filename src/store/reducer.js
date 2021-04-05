@@ -5,7 +5,7 @@ const reducer = (state, action) => {
   const { payload } = action;
   switch (action.type) {
     case actions.changeFilter:
-      return ChangeFilter(state, payload.filterName, payload.filterValue);
+      return ChangeFilter(state, payload);
 
     case actions.defaultFilter:
       return resetFilters();
@@ -20,14 +20,10 @@ export function resetFilters() {
   return InitialFilters;
 }
 
-export function ChangeFilter(state, filterName, filterValue) {
+export function ChangeFilter(state, payload) {
   let newState = {
     ...state,
-    [filterName]: filterValue,
-  };
-
-  newState = {
-    ...newState,
+    [payload.filterName]: Number(payload.filterValue),
   };
 
   return newState;
