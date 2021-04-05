@@ -21,11 +21,11 @@ const CardNavBar = ({ cardsData, index }) => {
   useEffect(() => {
     const listElements = document.querySelectorAll(".card-navbar>li");
 
-    listElements.forEach((el, index) => {
-      if (index !== selectedTab) {
-        el.className = "tab-unselected";
+    listElements.forEach((elem, index) => {
+      if (index === selectedTab) {
+        elem.className = "tab-selected";
       } else {
-        el.className = "tab-selected";
+        elem.className = "tab-unselected";
       }
     });
   }, [selectedTab, cardsData]);

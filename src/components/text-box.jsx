@@ -4,7 +4,7 @@ export default function TextBox({ handleTextChange, textValue }) {
     <div>
       <p id="resolution-detail">Resolution Detail*</p>
       <StyledTextBox
-        rows="5"
+        rows="4"
         placeHolderText="Enter resolution detail…"
         maxLength={300}
         handleTextChange={handleTextChange}
